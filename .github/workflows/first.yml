@@ -25,7 +25,7 @@ jobs:
               .split("\n")[0]
               .strip('"')
           )
-          aaaa = Path('./').resolve()
+          aaaa = "/".join(str(Path('../..').resolve()).split('/') + ['pyproject.toml'])
           subprocess.run('echo "aaaa='+aaaa+'" >> "$GITHUB_OUTPUT"', shell=True)
           subprocess.run('echo "publishTag='+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
