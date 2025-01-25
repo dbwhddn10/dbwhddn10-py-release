@@ -4,7 +4,7 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      publishTag: ${{ steps.setup.outputs.publishTag }}
+      version: ${{ steps.setup.outputs.version }}
       aaaa: ${{ steps.setup.outputs.aaaa }}
     steps:
       - uses: actions/checkout@v2
@@ -12,35 +12,34 @@ jobs:
         name: setup python
         with:
           python-version: "3.11"
-      - name: ls-al
-        run: pwd
-      - name: ls-al
-        id: ls_al
-        shell: bash
-        run: ls -al
       - name: subprocess
         id: setup
         shell: python
         run: |
           import subprocess
-          from pathlib import Path
-          aaaa = "/".join(str(Path('../').resolve()).split('/') + ['pyproject.toml'])
+          import pathlib
+          import urllib
+          import json
+
+          aaaa = urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
+          data = json.load(
+            urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
+          )
           version = (
-              Path('pyproject.toml')
+              pathlib.Path('pyproject.toml')
               .read_text(encoding="utf8")
               .split("version = ")[1]
               .split("\n")[0]
               .strip('"')
           )
           subprocess.run('echo "aaaa='+aaaa+'" >> "$GITHUB_OUTPUT"', shell=True)
-          subprocess.run('echo "publishTag=v'+version+'" >> "$GITHUB_OUTPUT"', shell=True)
+          subprocess.run('echo "version=v'+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
     needs: prepare
     runs-on: ubuntu-latest
     env:
-      PUBLISHTAG: ${{needs.prepare.outputs.publishTag}}
+      version: ${{needs.prepare.outputs.version}}
     steps:
-      - run: echo "$PUBLISHTAG"
-      - run: echo "${{needs.prepare.outputs.publishTag}}"
+      - run: echo "${{needs.prepare.outputs.version}}"
       - run: echo "${{needs.prepare.outputs.aaaa}}"
