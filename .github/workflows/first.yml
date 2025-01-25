@@ -16,7 +16,7 @@ jobs:
         shell: python
         run: |
           import subprocess
-          subprocess.run('echo "publishTag=v1" >> "$GITHUB_OUTPUT"')
+          subprocess.run('echo "publishTag=v1" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
     needs: prepare
