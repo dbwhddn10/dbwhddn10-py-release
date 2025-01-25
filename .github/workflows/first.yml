@@ -23,7 +23,7 @@ jobs:
           pkg_version = pyproject.split("version = ")[1].split("\n")[0].strip('"')
           pkg_name = pyproject.split("name = ")[1].split("\n")[0].strip('"')
           publish_info = json.load(
-            urllib.request.urlopen("https://pypi.org/pypi/"+pkg_name+"/"+pkg_version+"/json")
+            urllib.request.urlopen("https://pypi.org/pypi/dvc/0.61.1110/json")
           )
 
           if 'message' in publish_info:
