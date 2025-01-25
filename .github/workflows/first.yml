@@ -18,7 +18,7 @@ jobs:
         run: |
           import subprocess
           import pathlib
-          import urllib
+          import urllib.request
           import json
 
           aaaa = urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
