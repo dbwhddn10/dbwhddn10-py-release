@@ -17,14 +17,19 @@ jobs:
           import subprocess
           import pathlib
           import urllib.request
+          import urllib.error
           import json
 
           pyproject = pathlib.Path('pyproject.toml').read_text(encoding="utf8")
           pkg_version = pyproject.split("version = ")[1].split("\n")[0].strip('"')
           pkg_name = pyproject.split("name = ")[1].split("\n")[0].strip('"')
 
-          with urllib.request.urlopen("https://pypi.org/pypi/"+pkg_name+"/"+pkg_version+"/json") as response:
-            publish_info = json.load(response.read())
+          try:
+            publish_info = json.load(
+              urllib.request.urlopen("https://pypi.org/pypi/"+pkg_name+"/"+pkg_version+"/json")
+            )
+          except urllib.error.HTTPError:
+            publish_info = {"message": "Not Found"}
 
           if 'message' in publish_info:
             isPublished = False
