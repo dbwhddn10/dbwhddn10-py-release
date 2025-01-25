@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       publishTag: ${{ steps.setup.outputs.publishTag }}
+      aaaa: ${{ steps.setup.outputs.aaaa }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v4
@@ -24,7 +25,8 @@ jobs:
               .split("\n")[0]
               .strip('"')
           )
-          print(Path('./').resolve())
+          aaaa = Path('./').resolve()
+          subprocess.run('echo "aaaa='+aaaa+'" >> "$GITHUB_OUTPUT"', shell=True)
           subprocess.run('echo "publishTag='+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
@@ -35,3 +37,4 @@ jobs:
     steps:
       - run: echo "$PUBLISHTAG"
       - run: echo "${{needs.prepare.outputs.publishTag}}"
+      - run: echo "${{needs.prepare.outputs.aaaa}}"
