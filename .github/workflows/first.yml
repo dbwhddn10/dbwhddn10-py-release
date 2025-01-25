@@ -22,9 +22,9 @@ jobs:
           pyproject = pathlib.Path('pyproject.toml').read_text(encoding="utf8")
           pkg_version = pyproject.split("version = ")[1].split("\n")[0].strip('"')
           pkg_name = pyproject.split("name = ")[1].split("\n")[0].strip('"')
-          publish_info = json.load(
-            urllib.request.urlopen("https://pypi.org/pypi/dvc/0.61.1110/json")
-          )
+
+          with urllib.request.urlopen("https://pypi.org/pypi/"+pkg_name+"/"+pkg_version+"/json") as response:
+            publish_info = json.load(response.read())
 
           if 'message' in publish_info:
             isPublished = False
