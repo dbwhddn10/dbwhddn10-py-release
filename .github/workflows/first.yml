@@ -32,7 +32,7 @@ jobs:
               .split("\n")[0]
               .strip('"')
           )
-          subprocess.run('echo "aaaa='+aaaa+'" >> "$GITHUB_OUTPUT"', shell=True)
+          subprocess.run('echo "aaaa='+str(aaaa)+'" >> "$GITHUB_OUTPUT"', shell=True)
           subprocess.run('echo "version=v'+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
