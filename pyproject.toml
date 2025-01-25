@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbwhddn10-py-release"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["jongwoo Yoo <dbwhddn10@gmail.com>"]
 readme = "README.md"

@@ -4,16 +4,14 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.setup.outputs.version }}
-      aaaa: ${{ steps.setup.outputs.aaaa }}
+      isPublished: ${{ steps.get_infos.outputs.isPublished }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v4
-        name: setup python
         with:
           python-version: "3.11"
-      - name: subprocess
-        id: setup
+      - name: Get Infomations
+        id: get_infos
         shell: python
         run: |
           import subprocess
@@ -21,25 +19,37 @@ jobs:
           import urllib.request
           import json
 
-          aaaa = urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
-          data = json.dumps(json.load(
-            urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
-          ))
-          version = (
-              pathlib.Path('pyproject.toml')
-              .read_text(encoding="utf8")
-              .split("version = ")[1]
-              .split("\n")[0]
-              .strip('"')
+          pyproject = pathlib.Path('pyproject.toml').read_text(encoding="utf8")
+          pkg_version = pyproject.split("version = ")[1].split("\n")[0].strip('"')
+          pkg_name = pyproject.split("name = ")[1].split("\n")[0].strip('"')
+          publish_info = json.load(
+            urllib.request.urlopen("https://pypi.org/pypi/"+pkg_name+"/"+pkg_version+"/json")
           )
-          subprocess.run('echo "aaaa='+str(data)+'" >> "$GITHUB_OUTPUT"', shell=True)
-          subprocess.run('echo "version=v'+version+'" >> "$GITHUB_OUTPUT"', shell=True)
+
+          if 'message' in publish_info:
+            isPublished = False
+          else:
+            isPublished = True
+
+          subprocess.run('echo "isPublished='+str(isPublished)+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
     needs: prepare
     runs-on: ubuntu-latest
-    env:
-      version: ${{needs.prepare.outputs.version}}
+    if: needs.prepare.outputs.isPublished == 'False'
     steps:
-      - run: echo "${{needs.prepare.outputs.version}}"
-      - run: echo "${{needs.prepare.outputs.aaaa}}"
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+          poetry config pypi-token.pypi $PYPI_TOKEN
+          poetry publish --build
+    env:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
