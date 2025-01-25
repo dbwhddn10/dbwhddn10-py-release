@@ -18,16 +18,16 @@ jobs:
         run: |
           import subprocess
           from pathlib import Path
+          aaaa = "/".join(str(Path('../..').resolve()).split('/') + ['pyproject.toml'])
           version = (
-              Path("pyproject.toml")
+              Path(aaaa)
               .read_text(encoding="utf8")
               .split("version = ")[1]
               .split("\n")[0]
               .strip('"')
           )
-          aaaa = "/".join(str(Path('../..').resolve()).split('/') + ['pyproject.toml'])
           subprocess.run('echo "aaaa='+aaaa+'" >> "$GITHUB_OUTPUT"', shell=True)
-          subprocess.run('echo "publishTag='+version+'" >> "$GITHUB_OUTPUT"', shell=True)
+          subprocess.run('echo "publishTag=v'+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
     needs: prepare
