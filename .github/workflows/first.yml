@@ -16,7 +16,15 @@ jobs:
         shell: python
         run: |
           import subprocess
-          subprocess.run('echo "publishTag=v1" >> "$GITHUB_OUTPUT"', shell=True)
+          from pathlib import Path
+          version = (
+              Path("../../pyproject.toml")
+              .read_text(encoding="utf8")
+              .split("version = ")[1]
+              .split("\n")[0]
+              .strip('"')
+          )
+          subprocess.run('echo "publishTag='+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
     needs: prepare
