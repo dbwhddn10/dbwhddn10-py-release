@@ -57,5 +57,5 @@ jobs:
           poetry install
           poetry config pypi-token.pypi $PYPI_TOKEN
           poetry publish --build
-    env:
-      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
