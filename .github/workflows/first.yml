@@ -25,3 +25,4 @@ jobs:
       PUBLISHTAG: ${{needs.prepare.outputs.publishTag}}
     steps:
       - run: echo "$PUBLISHTAG"
+      - run: echo "${{needs.prepare.outputs.publishTag}}"
