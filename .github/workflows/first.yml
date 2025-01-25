@@ -1,0 +1,24 @@
+name: PYPI Publish
+on: push
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      publishTag: ${{ steps.setup.outputs.publishTag }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        name: setup python
+        id: setup
+        shell: python
+        run: |
+          import subprocess
+          subprocess.run('echo "publishTag=v1" >> "$GITHUB_OUTPUT"')
+  publish:
+    name: publish
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          PUBLISHTAG: ${{needs.prepare.outputs.publishTag}}
+        run: echo "$PUBLISHTAG"
