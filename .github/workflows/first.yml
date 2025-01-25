@@ -21,7 +21,7 @@ jobs:
     name: publish
     needs: prepare
     runs-on: ubuntu-latest
+    env:
+      PUBLISHTAG: ${{needs.prepare.outputs.publishTag}}
     steps:
-      - env:
-          PUBLISHTAG: ${{needs.prepare.outputs.publishTag}}
-        run: echo "$PUBLISHTAG"
+      - run: echo "$PUBLISHTAG"
