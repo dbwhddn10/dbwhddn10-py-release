@@ -22,9 +22,9 @@ jobs:
           import json
 
           aaaa = urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
-          data = json.load(
+          data = json.dumps(json.load(
             urllib.request.urlopen("https://pypi.org/pypi/dvc/json")
-          )
+          ))
           version = (
               pathlib.Path('pyproject.toml')
               .read_text(encoding="utf8")
@@ -32,7 +32,7 @@ jobs:
               .split("\n")[0]
               .strip('"')
           )
-          subprocess.run('echo "aaaa='+str(aaaa)+'" >> "$GITHUB_OUTPUT"', shell=True)
+          subprocess.run('echo "aaaa='+str(data)+'" >> "$GITHUB_OUTPUT"', shell=True)
           subprocess.run('echo "version=v'+version+'" >> "$GITHUB_OUTPUT"', shell=True)
   publish:
     name: publish
